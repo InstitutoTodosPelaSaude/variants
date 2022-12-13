@@ -1,0 +1,237 @@
+code	country	population
+BDI	Burundi	11890781
+COM	Comoros	869595
+DJI	Djibouti	988002
+ERI	Eritrea	3546427
+ETH	Ethiopia	114963583
+KEN	Kenya	53771300
+MDG	Madagascar	27691019
+MWI	Malawi	19129955
+MUS	Mauritius	1271767
+MYT	Mayotte	272813
+MOZ	Mozambique	31255435
+REU	Réunion	895308
+RWA	Rwanda	12952209
+SYC	Seychelles	98340
+SOM	Somalia	15893219
+SSD	South Sudan	11193729
+UGA	Uganda	45741000
+TZA	United Republic of Tanzania	59734213
+ZMB	Zambia	18383956
+ZWE	Zimbabwe	14862927
+AGO	Angola	32866268
+CMR	Cameroon	26545864
+CAF	Central African Republic	4829764
+TCD	Chad	16425859
+COG	Congo	5518092
+COD	Democratic Republic of the Congo	89561404
+GNQ	Equatorial Guinea	1402985
+GAB	Gabon	2225728
+STP	Sao Tome and Principe	219161
+BWA	Botswana	2351625
+SWZ	Eswatini	1160164
+LSO	Lesotho	2142252
+NAM	Namibia	2540916
+ZAF	South Africa	59308690
+BEN	Benin	12123198
+BFA	Burkina Faso	20903278
+CPV	Cabo Verde	555988
+CIV	Côte d'Ivoire	26378275
+GMB	Gambia	2416664
+GHA	Ghana	31072945
+GIN	Guinea	13132792
+GNB	Guinea-Bissau	1967998
+LBR	Liberia	5057677
+MLI	Mali	20250834
+MRT	Mauritania	4649660
+NER	Niger	24206636
+NGA	Nigeria	206139587
+SHN	Saint Helena	6071
+SEN	Senegal	16743930
+SLE	Sierra Leone	7976985
+TGO	Togo	8278737
+DZA	Algeria	43851043
+EGY	Egypt	102334403
+LBY	Libya	6871287
+MAR	Morocco	36910558
+SDN	Sudan	43849269
+TUN	Tunisia	11818618
+ESH	Western Sahara	597330
+ARM	Armenia	2963234
+AZE	Azerbaijan	10139175
+BHR	Bahrain	1701583
+CYP	Cyprus	1207361
+GEO	Georgia	3989175
+IRQ	Iraq	40222503
+ISR	Israel	8655541
+JOR	Jordan	10203140
+KWT	Kuwait	4270563
+LBN	Lebanon	6825442
+OMN	Oman	5106622
+QAT	Qatar	2881060
+SAU	Saudi Arabia	34813867
+PSE	State of Palestine	5101416
+SYR	Syrian Arab Republic	17500657
+TUR	Turkey	84339067
+ARE	United Arab Emirates	9890400
+YEM	Yemen	29825968
+KAZ	Kazakhstan	18776707
+KGZ	Kyrgyzstan	6524191
+TJK	Tajikistan	9537642
+TKM	Turkmenistan	6031187
+UZB	Uzbekistan	33469199
+AFG	Afghanistan	38928341
+BGD	Bangladesh	164689383
+BTN	Bhutan	771612
+IND	India	1380004385
+IRN	Iran	83992953
+MDV	Maldives	540542
+NPL	Nepal	29136808
+PAK	Pakistan	220892331
+LKA	Sri Lanka	21413250
+CHN	China	1439323774
+HKG	Hong Kong	7496988
+XKX	Kosovo	1809740
+MAC	Macao	649342
+TWN	Taiwan	23816775
+PRK	North Korea	25778815
+JPN	Japan	126476458
+MNG	Mongolia	3278292
+KOR	South KKorea	51269183
+BRN	Brunei Darussalam	437483
+KHM	Cambodia	16718971
+IDN	Indonesia	273523621
+LAO	Lao People's Democratic Republic	7275556
+MYS	Malaysia	32365998
+MMR	Myanmar	54409794
+PHL	Philippines	109581085
+SGP	Singapore	5850343
+THA	Thailand	69799978
+TLS	Timor-Leste	1318442
+VNM	Viet Nam	97338583
+AIA	Anguilla	15002
+ATG	Antigua and Barbuda	97928
+ABW	Aruba	106766
+BHS	Bahamas	393248
+BRB	Barbados	287371
+BES	Bonaire, Sint Eustatius and Saba	26221
+VGB	British Virgin Islands	30237
+CYM	Cayman Islands	65720
+CUB	Cuba	11326616
+CUW	Curaçao	164100
+DMA	Dominica	71991
+DOM	Dominican Republic	10847904
+GRD	Grenada	112519
+GLP	Guadeloupe	400127
+HTI	Haiti	11402533
+JAM	Jamaica	2961161
+MTQ	Martinique	375265
+MSR	Montserrat	4999
+PRI	Puerto Rico	2860840
+BLM	Saint Barthélemy	9885
+KNA	Saint Kitts and Nevis	53192
+LCA	Saint Lucia	183629
+MAF	Saint Martin (French part)	38659
+VCT	Saint Vincent and the Grenadines	110947
+SXM	Sint Maarten (Dutch part)	42882
+TTO	Trinidad and Tobago	1399491
+TCA	Turks and Caicos Islands	38718
+VIR	United States Virgin Islands	104423
+BLZ	Belize	397621
+CRI	Costa Rica	5094114
+SLV	El Salvador	6486201
+GTM	Guatemala	17915567
+HND	Honduras	9904608
+MEX	Mexico	128932753
+NIC	Nicaragua	6624554
+PAN	Panama	4314768
+ARG	Argentina	45195777
+BOL	Bolivia	11673029
+BRA	Brazil	212559409
+CHL	Chile	19116209
+COL	Colombia	50882884
+ECU	Ecuador	17643060
+FLK	Falkland Islands (Malvinas)	3483
+GUF	French Guiana	298682
+GUY	Guyana	786559
+PRY	Paraguay	7132530
+PER	Peru	32971846
+SUR	Suriname	586634
+URY	Uruguay	3473727
+VEN	Venezuela	28435943
+AUS	Australia	25499881
+NZL	New Zealand	4822233
+FJI	Fiji	896444
+NCL	New Caledonia	285491
+PNG	Papua New Guinea	8947027
+SLB	Solomon Islands	686878
+VUT	Vanuatu	307150
+GUM	Guam	168783
+KIR	Kiribati	119446
+MHL	Marshall Islands	59194
+FSM	Micronesia	115021
+NRU	Nauru	10834
+MNP	Northern Mariana Islands	57557
+PLW	Palau	18092
+ASM	American Samoa	55197
+COK	Cook Islands	17564
+PYF	French Polynesia	280904
+NIU	Niue	1618
+WSM	Samoa	198410
+TKL	Tokelau	1350
+TON	Tonga	105697
+TUV	Tuvalu	11792
+BLR	Belarus	9449321
+BGR	Bulgaria	6948445
+CZE	Czechia	10708982
+HUN	Hungary	9660350
+POL	Poland	37846605
+MDA	Republic of Moldova	4033963
+ROU	Romania	19237682
+RUS	Russian Federation	145934460
+SVK	Slovakia	5459643
+UKR	Ukraine	43733759
+DNK	Denmark	5792203
+EST	Estonia	1326539
+FRO	Faroe Islands	48865
+FIN	Finland	5540718
+ISL	Iceland	341250
+IRL	Ireland	4937796
+IMN	Isle of Man	85032
+LVA	Latvia	1886202
+LTU	Lithuania	2722291
+NOR	Norway	5421242
+SWE	Sweden	10099270
+GBR	United Kingdom	67886004
+ALB	Albania	2877800
+AND	Andorra	77265
+BIH	Bosnia and Herzegovina	3280815
+HRV	Croatia	4105268
+GIB	Gibraltar	33691
+GRC	Greece	10423056
+VAT	Holy See	809
+ITA	Italy	60461828
+MLT	Malta	441539
+MNE	Montenegro	628062
+MKD	North Macedonia	2083380
+PRT	Portugal	10196707
+SMR	San Marino	33938
+SRB	Serbia	8737370
+SVN	Slovenia	2078932
+ESP	Spain	46754783
+AUT	Austria	9006400
+BEL	Belgium	11589616
+FRA	France	65273512
+DEU	Germany	83783945
+LIE	Liechtenstein	38137
+LUX	Luxembourg	625976
+MCO	Monaco	39244
+NLD	Netherlands	17134873
+CHE	Switzerland	8654618
+BMU	Bermuda	62273
+CAN	Canada	37742157
+GRL	Greenland	56772
+SPM	Saint Pierre and Miquelon	5795
+USA	United States of America	331002647
+WLF	Wallis and Futuna	11369
+SRB	Serbia	6899126

@@ -1,0 +1,11 @@
+param	value	note
+input	matrix_year_lineages_regionbr.tsv	# input file
+count_col	2022	# Column with counts to be displayed as treemap elements
+colour_scheme	../../colors.tsv	# colour pallete, if colour file not provided
+colour_by	pango_lineage	# variable to be represented in the colour scheme
+top_levels	regiao	# Upper subdivisions
+last_level	pango_lineage	# Main subdivision
+hover_data		# extra data to be shown while hovering the mouse
+title		# Title to be displayed at the top of the treemap
+filter		# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
+backend	Qt5Agg	# matplotlib backend (recommended: pdf, Qt5Agg). Options: 'GTK3Agg', 'GTK3Cairo', 'GTK4Agg', 'GTK4Cairo', 'MacOSX', 'nbAgg', 'QtAgg', 'QtCairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template'
