@@ -38,7 +38,7 @@ if __name__ == '__main__':
     output = args.output
     path = os.path.abspath(os.getcwd()) + '/'
 
-    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/dev2/'
+    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
     # input = path + 'config/cov-lineages.tsv'
     # output = path + 'config/who_variants_json.tsv'
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
                 inv_special[alias_data[l]] = l
 
     # open output file
-    df3 = pd.DataFrame(columns=['pango_lineage', 'who_variant'])
+    df3 = pd.DataFrame(columns=['who_variant', 'pango_lineage'])
     for idx, row in df.iterrows():
         df2 = pd.DataFrame()
         who_name = df.loc[idx, 'who_variant']
