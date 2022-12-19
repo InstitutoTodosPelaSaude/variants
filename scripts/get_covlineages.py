@@ -96,16 +96,6 @@ if __name__ == '__main__':
         if pango_name in dfJ['pango_lineage'].tolist():
             print('\nSublineages of ' + who_name + ' (' + pango_name + '):')
 
-            # if pango_name.startswith('X'): # recombinant
-            #     base = pd.DataFrame(columns=['pango_lineage', 'Description'])
-            #     root = dfJ[dfJ['pango_lineage'].str.startswith(pango_name)]
-            #
-            #     frames = [base, root.sort_values(by='pango_lineage')]
-            #     df2 = pd.concat(frames)
-            #     df2['who_variant'] = who_name
-            #
-            #     df2 = df2[['pango_lineage', 'who_variant']]
-            # else:
             root = dfJ.loc[dfJ['pango_lineage'] == pango_name] # root lineage
             desc = dfJ[dfJ['pango_lineage'].str.startswith(pango_name + '.')] # lineage descendants
             alias = pd.DataFrame(columns=['pango_lineage', 'Description'])
@@ -121,7 +111,7 @@ if __name__ == '__main__':
             elif pango_name in inv_special: # inverted special_lineages
                 prefix = inv_special[pango_name]
                 alias = dfJ[dfJ['Description'].str.contains('Alias of ' + pango_name + '.')]
-                print(alias['pango_lineage'].tolist())
+                # print(alias['pango_lineage'].tolist())
 
             frames = [root, desc.sort_values(by='pango_lineage'), alias.sort_values(by='pango_lineage')]
             # print('root: ' + str(root['pango_lineage'].tolist()))
