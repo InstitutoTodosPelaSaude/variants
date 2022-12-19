@@ -31,3 +31,4 @@ dependencies:
   - PyQt5
   - patool==1.12
   - lxml==4.9.1
+  - colour
