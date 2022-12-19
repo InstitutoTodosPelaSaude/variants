@@ -26,21 +26,21 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 pd.set_option('display.max_columns', 500)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="Download data from",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("--input", required=True, help="TSV file listing parental lineages of SARS-CoV-2 variants")
-    parser.add_argument("--output", required=True, help="TSV containing the latest WHO variants and their respective pango lineages")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(
+    #     description="Download data from",
+    #     formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    # )
+    # parser.add_argument("--input", required=True, help="TSV file listing parental lineages of SARS-CoV-2 variants")
+    # parser.add_argument("--output", required=True, help="TSV containing the latest WHO variants and their respective pango lineages")
+    # args = parser.parse_args()
+    #
+    # input = args.input
+    # output = args.output
+    # path = os.path.abspath(os.getcwd()) + '/'
 
-    input = args.input
-    output = args.output
-    path = os.path.abspath(os.getcwd()) + '/'
-
-    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
-    # input = path + 'config/cov-lineages.tsv'
-    # output = path + 'config/who_variants_json.tsv'
+    path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
+    input = path + 'config/cov-lineages.tsv'
+    output = path + 'config/who_variants_json.tsv'
 
     def load_table(file):
         df = ''
@@ -96,7 +96,49 @@ if __name__ == '__main__':
         if pango_name in dfJ['pango_lineage'].tolist():
             print('\nSublineages of ' + who_name + ' (' + pango_name + '):')
 
-            if pango_name == 'X': # recombinant
+            # if pango_name.startswith('X'): # recombinant
+            #     base = pd.DataFrame(columns=['pango_lineage', 'Description'])
+            #     root = dfJ[dfJ['pango_lineage'].str.startswith(pango_name)]
+            #
+            #     frames = [base, root.sort_values(by='pango_lineage')]
+            #     df2 = pd.concat(frames)
+            #     df2['who_variant'] = who_name
+            #
+            #     df2 = df2[['pango_lineage', 'who_variant']]
+            # else:
+            root = dfJ.loc[dfJ['pango_lineage'] == pango_name] # root lineage
+            desc = dfJ[dfJ['pango_lineage'].str.startswith(pango_name + '.')] # lineage descendants
+            alias = pd.DataFrame(columns=['pango_lineage', 'Description'])
+
+            pango_alias = '.'.join(pango_name.split('.')[0:-1])
+            pango_sub = pango_name.split('.')[-1]
+
+            prefix = ''
+            if pango_alias in special_lineages.keys():
+                prefix = special_lineages[pango_alias]
+                alias = dfJ[dfJ['Description'].str.contains(prefix + '.' + pango_sub)]
+                alias = alias[~alias['pango_lineage'].isin(root['pango_lineage'].tolist() + desc['pango_lineage'].tolist())]
+            elif pango_name in inv_special: # inverted special_lineages
+                prefix = inv_special[pango_name]
+                alias = dfJ[dfJ['Description'].str.contains('Alias of ' + pango_name + '.')]
+                print(alias['pango_lineage'].tolist())
+
+            frames = [root, desc.sort_values(by='pango_lineage'), alias.sort_values(by='pango_lineage')]
+            # print('root: ' + str(root['pango_lineage'].tolist()))
+            # print('desc: ' + str(desc['pango_lineage'].tolist()))
+            # print('alias: ' + str(alias['pango_lineage'].tolist()))
+
+            df2 = pd.concat(frames)
+
+            # add column
+            df2['who_variant'] = who_name
+            df2 = df2[['pango_lineage', 'who_variant']]
+            df2 = df2[~df2['pango_lineage'].isin(df3['pango_lineage'].tolist())]
+            print(', '.join(df2['pango_lineage'].tolist()))
+        else:
+            if pango_name.startswith('X'):  # recombinant
+                print('\nSublineages of ' + who_name + ' (' + pango_name + '):')
+
                 base = pd.DataFrame(columns=['pango_lineage', 'Description'])
                 root = dfJ[dfJ['pango_lineage'].str.startswith(pango_name)]
 
@@ -105,37 +147,8 @@ if __name__ == '__main__':
                 df2['who_variant'] = who_name
 
                 df2 = df2[['pango_lineage', 'who_variant']]
-            else:
-                root = dfJ.loc[dfJ['pango_lineage'] == pango_name] # root lineage
-                desc = dfJ[dfJ['pango_lineage'].str.startswith(pango_name + '.')] # lineage descendants
-                alias = pd.DataFrame(columns=['pango_lineage', 'Description'])
+                print(', '.join(df2['pango_lineage'].tolist()))
 
-                pango_alias = '.'.join(pango_name.split('.')[0:-1])
-                pango_sub = pango_name.split('.')[-1]
-
-                prefix = ''
-                if pango_alias in special_lineages.keys():
-                    prefix = special_lineages[pango_alias]
-                    alias = dfJ[dfJ['Description'].str.contains(prefix + '.' + pango_sub)]
-                    alias = alias[~alias['pango_lineage'].isin(root['pango_lineage'].tolist() + desc['pango_lineage'].tolist())]
-                elif pango_name in inv_special: # inverted special_lineages
-                    prefix = inv_special[pango_name]
-                    alias = dfJ[dfJ['Description'].str.contains('Alias of ' + pango_name + '.')]
-                    print(alias['pango_lineage'].tolist())
-
-                frames = [root, desc.sort_values(by='pango_lineage'), alias.sort_values(by='pango_lineage')]
-                # print('root: ' + str(root['pango_lineage'].tolist()))
-                # print('desc: ' + str(desc['pango_lineage'].tolist()))
-                # print('alias: ' + str(alias['pango_lineage'].tolist()))
-
-                df2 = pd.concat(frames)
-
-                # add column
-                df2['who_variant'] = who_name
-                df2 = df2[['pango_lineage', 'who_variant']]
-                df2 = df2[~df2['pango_lineage'].isin(df3['pango_lineage'].tolist())]
-
-            print(', '.join(df2['pango_lineage'].tolist()))
         df3 = pd.concat([df3, df2], ignore_index=True)
 
 

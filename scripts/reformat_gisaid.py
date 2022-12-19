@@ -18,6 +18,7 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument("--metadata", required=True, help="Metadata file from GISAID")
+    parser.add_argument("--covlineages", required=True, help="CoV lineages TSV file")
     parser.add_argument("--variants", required=True, help="Variant-lineage TSV file")
     parser.add_argument("--geoscheme", required=True, help="TSV file with geographic classifications")
     parser.add_argument("--correction", required=False, help="TSV, CSV, or excel file containing new standards for column values")
@@ -31,6 +32,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     metadata = args.metadata
+    covlineages = args.covlineages
     variants_list = args.variants
     geoscheme = args.geoscheme
     fix_file = args.correction
@@ -42,14 +44,17 @@ if __name__ == '__main__':
     output = args.output
 
     # # path = os.path.abspath(os.getcwd())
-    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorioXX_20220812/'
-    # metadata = path + 'data/metadata_search.tsv'
-    # variants_list = path + 'config/who_variants_bs4.tsv'
-    # geoscheme = path + 'config/geoscheme_en.tsv'
+    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
+    # metadata = path + 'data/metadata_br.tsv'
+    # covlineages = path + 'config/cov-lineages.tsv'
+    # variants_list = path + 'config/who_variants_json.tsv'
+    # geoscheme = path + 'config/geoscheme.tsv'
     # fix_file = path + 'config/fix_values.xlsx'
     # date_col = 'date'
-    # start_date = '2022-01-01' # start date above this limit
-    # end_date = '2022-02-28' # end date below this limit
+    # weekasdate = 'end'
+    # start_date = '2022-06-01' # start date above this limit
+    # end_date = '2022-06-30' # end date below this limit
+    # sortby = ['country', 'date']
     # output = path + 'data/metadata_modified.tsv'
 
 
@@ -69,17 +74,15 @@ if __name__ == '__main__':
             exit()
         return df
 
-    variants = {}
+
+
     categories = {}
-    for line in open(variants_list, "r").readlines()[1:]:
-        variant, lineage = line.strip().split('\t')
-        varlin = variant + ' (' + lineage + ')'
-        if '*' in variant:
-            variants[lineage] = varlin
-        elif variant == 'Recombinante':
-            variants[lineage] = varlin
-        else:
-            categories[lineage] = variant
+    for line in open(covlineages, "r").readlines()[1:]:
+        variant, lineages = line.strip().split('\t')
+        if '*' not in variant:
+            categories[lineages] = variant
+    # print(categories)
+
 
     # nextstrain metadata
     df = load_table(metadata)
@@ -142,7 +145,7 @@ if __name__ == '__main__':
             df = df.drop(columns=[col])
     df.insert(1, 'code', '')
     df.insert(2, 'who_variant', '')
-    df.insert(3, 'variant_lineage', '')
+    # df.insert(3, 'variant_lineage', '')
     df.fillna('', inplace=True)
 
 
@@ -166,6 +169,17 @@ if __name__ == '__main__':
     df['epiweek'] = df['date'].apply(lambda x: get_epiweeks(x))
 
 
+    variants = {}
+    for line in open(variants_list, "r").readlines()[1:]:
+        variant, lineage = line.strip().split('\t')
+        # print(variant, lineage)
+        if '*' in variant:
+            variants[lineage] = variant
+        elif variant == 'Recombinante':
+            variants[lineage] = variant
+        else:
+            pass
+
     # add tag of variant category
     print('\t- Adding WHO variant information')
     def variant_name(lineage):
@@ -175,21 +189,21 @@ if __name__ == '__main__':
                 var_name = variants[lineage]
         return var_name
 
-
     def variant_category(variant):
         var_category = 'Outras'
-        # print(variant)
         if 'Recombinante' in variant:
             var_category = 'Recombinante'
         else:
-            for name in categories.keys():
-                if variant == name:
-                    var_category = categories[variant]
+            for var, cat in categories.items():
+                if variant == var:
+                    # var_category = categories[variant]
+                    var_category = cat
         return var_category
 
 
-    df['variant_lineage'] = df['pango_lineage'].apply(lambda x: variant_name(x))
-    df['who_variant'] = df['variant_lineage'].apply(lambda x: x.split(' ')[0] if '(' in x else x)
+    # df['variant_lineage'] = df['pango_lineage'].apply(lambda x: variant_name(x))
+    df['who_variant'] = df['pango_lineage'].apply(lambda x: variant_name(x))
+    # df['who_variant'] = df['variant_lineage'].apply(lambda x: x.split(' ')[0] if '(' in x else x)
     df['variant_category'] = df['who_variant'].apply(lambda x: variant_category(x))
 
     # print(df.columns.tolist())
@@ -306,9 +320,9 @@ if __name__ == '__main__':
 
     # keep only key columns
     if 'Last vaccinated' in df.columns.tolist():
-        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region', 'code', 'country', 'division', 'location', 'pango_lineage', 'variant_category', 'who_variant', 'variant_lineage', 'date_submitted']
+        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region', 'code', 'country', 'division', 'location', 'pango_lineage', 'variant_category', 'who_variant', 'date_submitted']
     else:
-        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region_exposure', 'code', 'country_exposure', 'division_exposure', 'location_exposure', 'pango_lineage', 'variant_category', 'who_variant', 'variant_lineage', 'date_submitted']
+        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region_exposure', 'code', 'country_exposure', 'division_exposure', 'location_exposure', 'pango_lineage', 'variant_category', 'who_variant', 'date_submitted']
 
     for c in keycols:
         if c not in df.columns.tolist():
