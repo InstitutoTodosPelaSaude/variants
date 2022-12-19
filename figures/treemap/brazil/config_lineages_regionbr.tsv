@@ -1,5 +1,5 @@
 param	value	note
-input	matrix_year_lineages_regionbr.tsv	# input file
+input	matrix_year_inclin_regiao.tsv	# input file
 count_col	2022	# Column with counts to be displayed as treemap elements
 colour_scheme	../../colors.tsv	# colour pallete, if colour file not provided
 colour_by	pango_lineage	# variable to be represented in the colour scheme
