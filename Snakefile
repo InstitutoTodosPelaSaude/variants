@@ -297,7 +297,8 @@ rule reformat_gisaid:
 		"""
 	input:
 		metadata = arguments.metadata,
-		variants = "config/who_variants.tsv",
+		variants = rules.get_lineages.output.variants,
+		covlineages = arguments.lineage_file,
 		geoscheme = arguments.geoscheme,
 		corr_file = arguments.correction_file,
 		extracols = "results/epi_data/matrix_weeks_covid19_casosNovos_estado.tsv"
@@ -314,6 +315,7 @@ rule reformat_gisaid:
 		"""
 		python3 scripts/reformat_gisaid.py \
 			--metadata {input.metadata} \
+			--covlineages {input.covlineages} \
 			--variants {input.variants} \
 			--geoscheme {input.geoscheme} \
 			--correction {input.corr_file} \

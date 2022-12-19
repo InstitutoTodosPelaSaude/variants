@@ -26,21 +26,21 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 pd.set_option('display.max_columns', 500)
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser(
-    #     description="Download data from",
-    #     formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    # )
-    # parser.add_argument("--input", required=True, help="TSV file listing parental lineages of SARS-CoV-2 variants")
-    # parser.add_argument("--output", required=True, help="TSV containing the latest WHO variants and their respective pango lineages")
-    # args = parser.parse_args()
-    #
-    # input = args.input
-    # output = args.output
-    # path = os.path.abspath(os.getcwd()) + '/'
+    parser = argparse.ArgumentParser(
+        description="Download data from",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("--input", required=True, help="TSV file listing parental lineages of SARS-CoV-2 variants")
+    parser.add_argument("--output", required=True, help="TSV containing the latest WHO variants and their respective pango lineages")
+    args = parser.parse_args()
 
-    path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
-    input = path + 'config/cov-lineages.tsv'
-    output = path + 'config/who_variants_json.tsv'
+    input = args.input
+    output = args.output
+    path = os.path.abspath(os.getcwd()) + '/'
+
+    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/test/'
+    # input = path + 'config/cov-lineages.tsv'
+    # output = path + 'config/who_variants_json.tsv'
 
     def load_table(file):
         df = ''
