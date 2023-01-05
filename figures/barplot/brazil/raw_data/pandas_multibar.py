@@ -27,7 +27,6 @@ if __name__ == '__main__':
     # os.chdir(path)
     # config = 'config_variants_weeks.tsv'
 
-
     def load_table(file):
         df = ''
         if str(file).split('.')[-1] == 'tsv':

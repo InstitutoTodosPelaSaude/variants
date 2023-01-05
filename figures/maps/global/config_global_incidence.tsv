@@ -25,7 +25,7 @@ nrows	1	# number of rows of the multiplot
 ncols	1	# number of columns of the multiplot
 upperleft_coord	83.91051243013638, -170	# coordinates of the upper left point, to crop the map
 lowerright_coord	-58, 179.55957744046407	# coordinates of the lower right point, to crop the map
-filter	group_id:2022-12-03	# keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category. Column name as in groupby
+filter	group_id:2022-12-17	# keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category. Column name as in groupby
 figsize	7, 4	# figure size: width and height, in inches
 legend	False	# add legend? True or False
 output_file		# Provide a file name, and an output with classified data will be saved

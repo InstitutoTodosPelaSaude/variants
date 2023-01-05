@@ -84,6 +84,7 @@ if __name__ == '__main__':
         exit()
 
     # Load sample metadata
+    print('\t - Loading dataset')
     input1 = path + params.loc['input1', 'value']
     df1 = load_table(input1)
     df1.fillna('X', inplace=True)
@@ -92,6 +93,7 @@ if __name__ == '__main__':
     dfP = pd.DataFrame()
     input2 = params.loc['input2', 'value']
     if input2 not in [None, '']:
+        print('\t - Loading extra elements to be plotted')
         input2 = path + input2
         dfP = load_table(input2)
         dfP['lat'] = dfP['lat'].astype(float)
@@ -126,6 +128,8 @@ if __name__ == '__main__':
 
     # filter
     def filter_df(df, criteria):
+        print('\t - Filtering data')
+
         new_df = pd.DataFrame()
         for filter_value in sorted(criteria.split(',')):
             filter_value = filter_value.strip()
@@ -164,6 +168,7 @@ if __name__ == '__main__':
 
     # print(hexcolours)
 
+    print('\t - Loading colour scheme')
     colour_scheme = {}
     c = 0
     if map_type == 'bivariate':
@@ -187,6 +192,8 @@ if __name__ == '__main__':
 
 
     def classify(df, column, bins, axis, lowest):
+        print('\t - Classifying datapoints in categories')
+
         origin = 0
         if lowest not in [''] and str(lowest)[-1].isdigit():
             origin = float(lowest)
@@ -288,6 +295,8 @@ if __name__ == '__main__':
     # print(df2.columns.tolist())
 
     for i, (name, df) in enumerate(df2.groupby(group)):
+        print('\t - Plotting data for: ' + name)
+
         upperleft_coord = [float(value.strip()) for value in params.loc['upperleft_coord', 'value'].split(',')]
         lowerright_coord = [float(value.strip()) for value in params.loc['lowerright_coord', 'value'].split(',')]
 
@@ -318,6 +327,7 @@ if __name__ == '__main__':
         for shape, data in geodf.groupby(id_geocol):
             shape = str(shape)  # [:-3]
             # print(shape)
+            print('\t\t - ' + shape)
 
             # define the color for each group using the dictionary
             if shape in df.index:

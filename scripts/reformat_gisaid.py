@@ -86,9 +86,11 @@ if __name__ == '__main__':
 
     # nextstrain metadata
     df = load_table(metadata)
+
     print('\t- Keeping only sequences longer than 21,000 bp')
-    df['Sequence length'] = df['Sequence length'].astype(int)
-    df = df.loc[df['Sequence length'] >= 21000]
+    df = df.rename(columns={'Sequence length': 'length'})
+    df['length'] = df['length'].astype(int)
+    df = df.loc[df['length'] >= 21000]
 
     if 'Last vaccinated' in df.columns.tolist():
         print('\t- Renaming columns')
@@ -288,7 +290,7 @@ if __name__ == '__main__':
         df['code'] = df['country'].apply(lambda x: get_iso(x))
         # print('here')
     else:
-        df['code'] = df['country_exposure'].apply(lambda x: get_iso(x))
+        df['code'] = df['country'].apply(lambda x: get_iso(x))
 
 
     # parse subcontinental regions in geoscheme
@@ -314,7 +316,7 @@ if __name__ == '__main__':
     if 'Last vaccinated' in df.columns.tolist():
         df['region'] = df['code'].map(geoLevels)
     else:
-        df['region_exposure'] = df['code'].map(geoLevels)
+        df['region'] = df['code'].map(geoLevels)
 
     # print(df[['region', 'code', 'country', 'division', 'location']])
 
@@ -322,7 +324,7 @@ if __name__ == '__main__':
     if 'Last vaccinated' in df.columns.tolist():
         keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region', 'code', 'country', 'division', 'location', 'pango_lineage', 'variant_category', 'who_variant', 'date_submitted']
     else:
-        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region_exposure', 'code', 'country_exposure', 'division_exposure', 'location_exposure', 'pango_lineage', 'variant_category', 'who_variant', 'date_submitted']
+        keycols = ['gisaid_epi_isl', 'date', 'epiweek', 'region', 'code', 'country', 'division', 'location', 'pango_lineage', 'variant_category', 'who_variant', 'date_submitted']
 
     for c in keycols:
         if c not in df.columns.tolist():
