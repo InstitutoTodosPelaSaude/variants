@@ -7,8 +7,8 @@ xlabel		# X label
 ylabel		# Y label
 min_value	0.001	# minimum value
 max_value	12000	# maximum value
-category_order	TWN, HKG, KOR, GRC, NZL, FRA, AUT, JPN, SVN, SGP, DEU, ITA, CYP, CHE, AUS, FIN, MUS, LVA, CHL, DNK	# order of categories listed in 'categories'
-filter	code:TWN, code:HKG, code:KOR, code:GRC, code:NZL, code:FRA, code:AUT, code:JPN, code:SVN, code:SGP, code:DEU, code:ITA, code:CYP, code:CHE, code:AUS, code:FIN, code:MUS, code:LVA, code:CHL, code:DNK	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
+category_order	HKG, KOR, TWN, NZL, JPN, GRC, FRA, SVN, AUT, AUS, ITA, CYP, DEU, SGP, CHE, MUS, FIN, CHL, LVA, PER	# order of categories listed in 'categories'
+filter	code:HKG, code:KOR, code:TWN, code:NZL, code:JPN, code:GRC, code:FRA, code:SVN, code:AUT, code:AUS, code:ITA, code:CYP, code:DEU, code:SGP, code:CHE, code:MUS, code:FIN, code:CHL, code:LVA, code:PER	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
 ignore_cols	country, population	# columns to be ignored in the line plot
 label_format	integer	# label format
 show_annotations	no	# yes or no

@@ -14,8 +14,8 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2022-10-02",
-		end_date = "2022-12-10",
+		start_date = "2021-12-26",
+		end_date = "2022-12-31",
 		unit = "week"
 
 arguments = rules.arguments.params
@@ -34,6 +34,7 @@ rule all:
 		snakemake --cores all lininc_brazil
 		snakemake --cores all colors
 		snakemake --cores all copy_files
+		snakemake --cores all dataviz
 		"""
 
 
@@ -195,17 +196,19 @@ rule brazil_epidata_run:
 
 
 METRICAS2 = ["casosNovos", "obitosNovos"]
-GEOLEVELS = ["regiao", "macsaud_code", "estado"]
+GEOLEVELS = ["regiao", "macsaud_code", "estado", "codmun"]
 #GEOLEVELS = ["regiao", "estado"]
 
 rule collapse:
 	input:
-		expand("results/epi_data/matrix_days_covid19_{mtc}_X_{geo}.tsv", mtc=METRICAS2, geo=GEOLEVELS)
+		expand("results/epi_data/matrix_days_covid19_{mtc}_x_{geo}.tsv", mtc=METRICAS2, geo=GEOLEVELS)
+
 
 dic_params2 = {
 "regiao": ["\'\'", "uf_sigla coduf codmun estado macsaud_code macsaud municipio"],
 "macsaud_code": ["macsaud regiao coduf estado uf_sigla", "codmun municipio"],
-"estado": ["coduf uf_sigla regiao", "codmun municipio macsaud_code macsaud"]
+"estado": ["coduf uf_sigla regiao", "codmun municipio macsaud_code macsaud"],
+"codmun": ["municipio uf_sigla regiao populacaoTCU2019", "macsaud_code macsaud estado coduf"],
 }
 
 def parameters2(loc):
@@ -231,7 +234,7 @@ rule collapse_run:
 		time_unit = arguments.unit,
 		week_format = "end",
 	output:
-		matrix_collapsed_days = "results/epi_data/matrix_days_covid19_{mtc}_X_{geo}.tsv",
+		matrix_collapsed_days = "results/epi_data/matrix_days_covid19_{mtc}_x_{geo}.tsv",
 		matrix_collapsed_weeks = "results/epi_data/matrix_weeks_covid19_{mtc}_{geo}.tsv",
 		matrix_incidence_weeks = "results/epi_data/matrix_weeks_incidence_{mtc}_{geo}.tsv",
 		stacked_incidence_weeks = "results/epi_data/stacked_weeks_incidence_{mtc}_{geo}.tsv",
@@ -493,7 +496,7 @@ rule lininc_global:
 			--input2 {output.genyear} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
-			--filter "~country:Curacao, ~country:Sint Maarten" \
+			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
 			--output {output.linfreq}
 
 		python3 scripts/matrix_operations.py \
@@ -501,7 +504,7 @@ rule lininc_global:
 			--input2 {output.incyear} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
-			--filter "~country:Curacao, ~country:Sint Maarten" \
+			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
 			--multiply "yes" \
 			--output {output.lininc}
 		"""
