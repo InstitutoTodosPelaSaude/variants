@@ -13,9 +13,9 @@ if __name__ == '__main__':
     parser.add_argument("--input1", required=True, help="Original dataframe file")
     parser.add_argument("--input2", required=False, help="Files with extra columns to be added or modified, including an index column")
     parser.add_argument("--index", required=False, type=str, help="Column with unique identifiers")
-    parser.add_argument("--action", required=True, type=str,
+    parser.add_argument("--action", required=False, type=str,
                         choices=['add', 'modify', 'reorder'], help="Action to be executed to filter target taxa")
-    parser.add_argument("--mode", required=True, type=str,
+    parser.add_argument("--mode", required=False, type=str,
                         choices=['columns', 'rows'], help="Elements to be processed: columns or rows?")
     parser.add_argument("--targets", required=False,  help="List of columns or rows to be added, remove or modified."
                                                            "It can be provided as a file, one target per line, or as a comma-separated list of targets.")
