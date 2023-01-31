@@ -14,7 +14,7 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2021-12-26",
+		start_date = "2022-10-23",
 		end_date = "2022-12-31",
 		unit = "week"
 
