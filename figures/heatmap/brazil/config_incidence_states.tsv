@@ -9,7 +9,7 @@ min_value	0.001	# minimum value
 max_value	12000	# maximum value
 category_order	RO, AC, AM, RR, PA, AP, TO, MA, PI, CE, RN, PB, PE, AL, SE, BA, MS, MT, GO, DF, MG, ES, RJ, SP, PR, SC, RS	# order of categories listed in 'categories'
 filter		# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
-ignore_cols	estado, coduf, regiao, populacaoTCU2019, ADM2_PCODE	# columns to be ignored in the line plot
+ignore_cols	estado, coduf, regiao, populacaoTCU2019, ADM2_PCODE, 2022-10-01, 2022-10-08, 2022-10-15, 2022-10-22, 2022-10-29, 2022-11-05, 2022-11-12, 2022-11-19	# columns to be ignored in the line plot
 label_format	integer	# label format
 show_annotations	no	# yes or no
 show_legend	yes	# yes or no

@@ -3,11 +3,11 @@ input	matrix_weeks_variants_regiao.tsv	# input file
 scale	relative	# scale of the data to be plotted as stacks
 y_var	who_variant	# main variable, shown on Y axis
 x_label		# X label Última dia da semana epidemiológica
-y_label		# Y label Frequência de variantes em circulação nas últimas semanas
+y_label	Frequência de variantes\n(dados brutos)	# Y label Frequência de variantes em circulação nas últimas semanas
 groupby	regiao	# column containing categories of data to be plotted as subplots
 plot_kind	bar	# type of plot: bar, barh
 filter		# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
-ignore_cols	code	# columns to be ignored in the line plot
+ignore_cols	code, 2022-10-01, 2022-10-08, 2022-10-15, 2022-10-22, 2022-10-29, 2022-11-05, 2022-11-12, 2022-11-19	# columns to be ignored in the line plot
 colour_by	who_variant	# variable to be represented in the colour scheme
 colour_scheme	../../../colors.tsv	# colour pallete, if colour file not provided
 plot_label	yes	# Plot label? (yes or no)
@@ -23,5 +23,5 @@ same_xscale	yes	# same Y axis scale
 min_y		# minimum value for Y axis
 max_y	100	# maximum value for Y axis
 log_scale	no	# convert values to white scale
-figsize	11, 3	# figure size: width and height, in inches
+figsize	12, 3	# figure size: width and height, in inches
 backend	Qt5Agg	# matplotlib backend (recommended: pdf, Qt5Agg). Options: 'GTK3Agg', 'GTK3Cairo', 'GTK4Agg', 'GTK4Cairo', 'MacOSX', 'nbAgg', 'QtAgg', 'QtCairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template'

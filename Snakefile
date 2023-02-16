@@ -14,8 +14,8 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2022-10-23",
-		end_date = "2022-12-31",
+		start_date = "2022-09-25",
+		end_date = "2023-01-28",
 		unit = "week"
 
 arguments = rules.arguments.params
@@ -465,35 +465,35 @@ rule lininc_global:
 	params:
 		index1 = "pango_lineage code",
 		index2 = "code",
-		unit = "year",
+		unit = "total",
 		format = "integer",
 	output:
-		genyear = "results/variant_data/matrix_year_allgenomes_country.tsv",
-		linyear = "results/variant_data/matrix_year_lineages_country.tsv",
-		linfreq = "results/variant_data/matrix_year_freqlin_country.tsv",
-		incyear = "results/epi_data/matrix_year_cases100k_global.tsv",
-		lininc = "results/epi_data/matrix_year_100klin_global.tsv"
+		gentotal = "results/variant_data/matrix_total_allgenomes_country.tsv",
+		lintotal = "results/variant_data/matrix_total_lineages_country.tsv",
+		linfreq = "results/variant_data/matrix_total_freqlin_country.tsv",
+		inctotal = "results/epi_data/matrix_total_cases100k_global.tsv",
+		lininc = "results/epi_data/matrix_total_100klin_global.tsv"
 	shell:
 		"""
 		python3 scripts/aggregator.py \
 			--input {input.lineages} \
 			--unit {params.unit} \
 			--format {params.format} \
-			--output {output.linyear}
+			--output {output.lintotal}
 
 		python3 scripts/aggregator.py \
 			--input {input.genomes} \
 			--unit {params.unit} \
-			--output {output.genyear}
+			--output {output.gentotal}
 
 		python3 scripts/aggregator.py \
 			--input {input.incidence} \
 			--unit {params.unit} \
-			--output {output.incyear}
+			--output {output.inctotal}
 
 		python3 scripts/matrix_operations.py \
-			--input1 {output.linyear} \
-			--input2 {output.genyear} \
+			--input1 {output.lintotal} \
+			--input2 {output.gentotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
 			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
@@ -501,7 +501,7 @@ rule lininc_global:
 
 		python3 scripts/matrix_operations.py \
 			--input1 {output.linfreq} \
-			--input2 {output.incyear} \
+			--input2 {output.inctotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
 			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
@@ -526,16 +526,16 @@ rule lininc_brazil:
 	params:
 		index1 = "pango_lineage regiao",
 		index2 = "regiao",
-		unit = "year",
+		unit = "total",
 		format = "integer",
 	output:
 		lineages = temp("results/variant_data/matrix_weeks_lineages_division2.tsv"),
 		linweek = "results/variant_data/matrix_weeks_lineages_regionbr.tsv",
-		genyear = "results/variant_data/matrix_year_allgenomes_regionbr.tsv",
-		linyear = "results/variant_data/matrix_year_lineages_regionbr.tsv",
-		linfreq = "results/variant_data/matrix_year_freqlin_regionbr.tsv",
-		incyear = "results/epi_data/matrix_year_incidence_regiao.tsv",
-		lininc = "results/epi_data/matrix_year_inclin_regiao.tsv"
+		gentotal = "results/variant_data/matrix_total_allgenomes_regionbr.tsv",
+		lintotal = "results/variant_data/matrix_total_lineages_regionbr.tsv",
+		linfreq = "results/variant_data/matrix_total_freqlin_regionbr.tsv",
+		inctotal = "results/epi_data/matrix_total_incidence_regiao.tsv",
+		lininc = "results/epi_data/matrix_total_inclin_regiao.tsv"
 	shell:
 		"""
 		python3 scripts/reformat_dataframe.py \
@@ -561,19 +561,19 @@ rule lininc_brazil:
 			--input {output.linweek} \
 			--unit {params.unit} \
 			--format {params.format} \
-			--output {output.linyear}
+			--output {output.lintotal}
 
 		python3 scripts/collapser.py \
-			--input {output.linyear} \
+			--input {output.lintotal} \
 			--index {params.index2} \
 			--unique-id {params.index2} \
 			--ignore pango_lineage \
 			--format {params.format} \
-			--output {output.genyear}
+			--output {output.gentotal}
 
 		python3 scripts/matrix_operations.py \
-			--input1 {output.linyear} \
-			--input2 {output.genyear} \
+			--input1 {output.lintotal} \
+			--input2 {output.gentotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
 			--output {output.linfreq}
@@ -581,11 +581,11 @@ rule lininc_brazil:
 		python3 scripts/aggregator.py \
 			--input {input.incidence} \
 			--unit {params.unit} \
-			--output {output.incyear}
+			--output {output.inctotal}
 
 		python3 scripts/matrix_operations.py \
 			--input1 {output.linfreq} \
-			--input2 {output.incyear} \
+			--input2 {output.inctotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
 			--multiply yes \
@@ -629,8 +629,8 @@ rule copy_files:
 		cp "./results/epi_data/stacked_weeks_incidence_casosNovos_macsaud_code.tsv" ./figures/maps/brazil
 		cp "./results/epi_data/matrix_weeks_incidence_casosNovos_estado.tsv" ./figures/heatmap/brazil
 		cp "./results/epi_data/matrix_weeks_cases100k_global.tsv" ./figures/heatmap/global
-		cp "./results/epi_data/matrix_year_100klin_global.tsv" ./figures/treemap/global
-		cp "./results/epi_data/matrix_year_inclin_regiao.tsv" ./figures/treemap/brazil
+		cp "./results/epi_data/matrix_total_100klin_global.tsv" ./figures/treemap/global
+		cp "./results/epi_data/matrix_total_inclin_regiao.tsv" ./figures/treemap/brazil
 		cp "./results/variant_data/matrix_weeks_variants_regiao.tsv" ./figures/barplot/brazil/raw_data
 		"""
 

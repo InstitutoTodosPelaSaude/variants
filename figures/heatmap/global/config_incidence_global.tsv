@@ -8,8 +8,8 @@ ylabel		# Y label
 min_value	0.001	# minimum value
 max_value	12000	# maximum value
 category_order	HKG, KOR, TWN, NZL, JPN, GRC, FRA, SVN, AUT, AUS, ITA, CYP, DEU, SGP, CHE, MUS, FIN, CHL, LVA, PER	# order of categories listed in 'categories'
-filter	code:HKG, code:KOR, code:TWN, code:NZL, code:JPN, code:GRC, code:FRA, code:SVN, code:AUT, code:AUS, code:ITA, code:CYP, code:DEU, code:SGP, code:CHE, code:MUS, code:FIN, code:CHL, code:LVA, code:PER	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
-ignore_cols	country, population	# columns to be ignored in the line plot
+filter	code:HKG, code:KOR, code:JPN, code:NZL, code:TWN, code:SVN, code:FRA, code:AUS, code:AUT, code:CYP, code:ITA, code:GRC, code:MUS, code:DEU, code:FIN, code:CHL, code:CHE, code:PRY, code:USA, code:URY, code:PER	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
+ignore_cols	country, population, 2022-10-01, 2022-10-08, 2022-10-15, 2022-10-22, 2022-10-29, 2022-11-05, 2022-11-12, 2022-11-19	# columns to be ignored in the line plot
 label_format	integer	# label format
 show_annotations	no	# yes or no
 show_legend	yes	# yes or no

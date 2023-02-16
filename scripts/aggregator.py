@@ -15,7 +15,7 @@ if __name__ == '__main__':
     )
     parser.add_argument("--input", required=True, help="Matrix of daily counts per location")
     parser.add_argument("--unit", required=True, nargs=1, type=str, default='week',
-                        choices=['week', 'month', 'year', 'full'], help="Time unit for conversion")
+                        choices=['week', 'month', 'year', 'total'], help="Time unit for conversion")
     parser.add_argument("--format",required=False, nargs=1, type=str, default='float',
                         choices=['float', 'integer'], help="What is the format of the data points (float/integer)?")
     parser.add_argument("--weekasdate",required=False, nargs=1, type=str, default='no',
@@ -37,18 +37,18 @@ if __name__ == '__main__':
     output = args.output
 
 
-    # path = '/Users/anderson/google_drive/ITpS/projetos_colaboracoes/phyloDF/analyses/20220703_delta_Pgeo/subsampler/'
+    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorio11_20230206/results/variant_data/'
     # os.chdir(path)
-    # input = path + 'outputs/matrix_cases_unit.tsv'
-    # unit = 'week'
-    # data_format = 'float'
-    # weekasdate = 'end'
-    # filters = 'who_variant:Delta'#'config/filters.tsv'
-    # start_date = '2021-02-23' # start date of period of interest
-    # end_date = '2021-12-23' # end date of period of interest
+    # input = path + 'matrix_year_lineages_country.tsv'
+    # unit = 'year'
+    # data_format = 'integer'
+    # weekasdate = ''
+    # filters = 'country:Brazil'#'config/filters.tsv'
+    # start_date = '' # start date of period of interest
+    # end_date = '' # end date of period of interest
     # # start_date = None
     # # end_date = None
-    # output = input.split('.')[0] + '_' + unit + '.tsv'
+    # output = path + 'test_' + unit + '.tsv'
 
 
 
@@ -93,7 +93,9 @@ if __name__ == '__main__':
             # print(new_df.size)
             if new_df.empty:
                 df_filtered = df[df[filter_col].isin(filter_val)]
-                new_df = new_df.append(df_filtered)
+                # new_df = new_df.append(df_filtered)
+                frames = [new_df, df_filtered]
+                new_df = pd.concat(frames)
             else:
                 new_df = new_df[new_df[filter_col].isin(filter_val)]
             # print(new_df)#.head())
@@ -135,9 +137,9 @@ if __name__ == '__main__':
 
     # rename column names and drop columns out of date range
     today = time.strftime('%Y-%m-%d', time.gmtime())
-    if start_date == None:
+    if start_date in ['', None]:
         start_date = pd.to_datetime([col for col in df.columns.to_list() if col[0].isdecimal()]).min()
-    if end_date == None:
+    if end_date in ['', None]:
         end_date = today
 
     nondate_cols = []
@@ -187,10 +189,14 @@ if __name__ == '__main__':
                     if year not in time_cols:
                         time_cols.append(year)
                     return year
-                elif unit == 'full':
+                elif unit == 'total':
+                    if unit not in time_cols:
+                        time_cols.append(unit)
                     return 'total'
             else:
-                if unit == 'full':
+                if unit == 'total':
+                    if unit not in time_cols:
+                        time_cols.append(unit)
                     return 'total'
         else:
             return value

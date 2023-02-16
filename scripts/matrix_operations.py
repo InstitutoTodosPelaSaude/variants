@@ -15,12 +15,15 @@ if __name__ == '__main__':
     parser.add_argument("--input2", required=False, type=str,  help="Secondary matrix, with values used as denominators")
     parser.add_argument("--index1", nargs="+", required=True, type=str, help="Columns with unique identifiers in the numerator file")
     parser.add_argument("--index2", nargs="+", required=False, type=str, help="Columns with unique identifiers in the denominator file, at least one match index1")
+    parser.add_argument("--extra-columns", required=False, nargs='+', type=str, help="Extra columns to export from input1 to output, guided by data in index1")
     parser.add_argument("--rolling-average", required=False, type=int,  help="Window for rolling average conversion")
     parser.add_argument("--norm-var", required=False, type=str,  help="Single column to be used for normalization of all columns (e.g. population)")
     parser.add_argument("--rate", required=False, type=int,  help="Rate factor for normalization (e.g. 100000 habitants)")
     parser.add_argument("--min-denominator", required=False, type=int, default=0, help="Value X of rolling average window (mean at every X data points in time series)")
     parser.add_argument("--multiply", required=False, nargs=1, type=str, default='no', choices=['yes', 'no'], help="Multiply values, matrix 1 X matrix 2?")
-    parser.add_argument("--filter", required=False, type=str, help="Format: '~column_name:value'. Remove '~' to keep only that data category")
+    parser.add_argument("--filter1", required=False, type=str, help="Format: '~column_name:value'. Remove '~' to keep only that data category")
+    parser.add_argument("--filter2", required=False, type=str, help="Format: '~column_name:value'. Remove '~' to keep only that data category")
+    parser.add_argument("--sortby", required=False, nargs='+', type=str, help="Columns to be used to sort the output file")
     parser.add_argument("--output", required=True, help="TSV matrix with normalized values")
     args = parser.parse_args()
 
@@ -33,22 +36,25 @@ if __name__ == '__main__':
     rate_factor = args.rate
     min_denominator = args.min_denominator
     multiply = args.multiply[0]
-    filters = args.filter
+    filter1 = args.filter1
+    filter2 = args.filter2
+    sortby = args.sortby    
     output = args.output
 
 
-    # path = "/Users/anderson/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorioXX_20221025/results/"
-    # input1 = path + 'epi_data/matrix_weeks_covid19_cases_global.tsv'
-    # input2 = path + 'epi_data/matrix_weeks_covid19_cases_global.tsv'
-    # unique_id1 = ['code']
-    # unique_id2 = ['code']
-    # norm_variable = 'population'
-    # rate_factor = '100000'
+    # path = "/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/resp_pathogens/analyses/20230208_devsnake/results/state/"
+    # input1 = path + 'combined_matrix_state_posneg_weeks.tsv'
+    # input2 = path + 'combined_matrix_state_totaltests_weeks.tsv'
+    # unique_id1 = ['pathogen', 'state_code']
+    # unique_id2 = ['pathogen', 'state_code']
+    # norm_variable = ''
+    # rate_factor = ''
     # rolling_avg = ''
     # multiply = 'no'
-    # min_denominator = 0
-    # filters = '~code:ATA, ~code:GGY, ~code:JEY'
-    # output = path + 'matrix_caseprop_global.tsv'
+    # min_denominator = 50
+    # filter1 = 'test_result:Positive'
+    # filter2 = ''
+    # output = path + 'mock_combined.tsv'
 
 
     def load_table(file):
@@ -72,7 +78,6 @@ if __name__ == '__main__':
     df = load_table(input1)
     df.fillna('', inplace=True)
 
-
     for idx in unique_id1:
         df = df[~df[idx].isin([''])]
 
@@ -95,6 +100,7 @@ if __name__ == '__main__':
         # print('Include:', include)
         for filter_col, filter_val in include.items():
             print('\t- Including only rows with \'' + filter_col + '\' = \'' + ', '.join(filter_val) + '\'')
+
             # print(new_df.size)
             if new_df.empty:
                 df_filtered = df[df[filter_col].isin(filter_val)]
@@ -128,14 +134,14 @@ if __name__ == '__main__':
         return new_df
 
     # load data
-    if filters not in ['', None]:
-        df = filter_df(df, filters)
+    if filter1 not in ['', None]:
+        df = filter_df(df, filter1)
 
     if input2 not in ['', None]:
         df2 = load_table(input2)
         df2.fillna('', inplace=True)
-        if filters not in ['', None]:
-            df2 = filter_df(df2, filters)
+        if filter2 not in ['', None]:
+            df2 = filter_df(df2, filter2)
     else:
         df2 = df[unique_id1]
         norm_variable = 'norm_variable'
@@ -155,16 +161,17 @@ if __name__ == '__main__':
             else:
                 date_columns.append(column)
 
+    if len(date_columns) < 1:
+        date_columns.append('total')
 
     # set new indices
     # print(unique_id1)
     # print(df['macsaud_code'].tolist())
     for columns, dataframe in zip([unique_id1, unique_id2], [df, df2]):
-        # print(dataframe.head())
         for col in columns:
             if str(dataframe[col].tolist()[0][0]).isdigit(): # if first character is digit
                 if str(dataframe[col].tolist()[0][-1]).isdigit(): # if last character is digit
-                    dataframe[col] = dataframe[col].astype(int).astype(str)
+                    dataframe[col] = dataframe[col].astype(str)
                     # print(dataframe[col].tolist()[0])
                     # print(dataframe.head())
         # else:
@@ -192,7 +199,9 @@ if __name__ == '__main__':
     # print(df2['unique_id2'].tolist())
 
     # create empty dataframes
-    nondate_columns = [column for column in df.columns.to_list() if not column[0].isdecimal()]
+    # nondate_columns = [column for column in df.columns.to_list() if not column[0].isdecimal()]
+    nondate_columns = [column for column in df.columns.to_list() if column not in date_columns]
+
     # print(date_columns)
     # print(nondate_columns)
 
@@ -269,8 +278,26 @@ if __name__ == '__main__':
                 reported.append(entry)
 
 
+    # if extra_cols in [None, '', ['']]:
+    #     extra_cols = []
+    #
+    # if extra_cols not in [None, '', ['']]:
+    #     for column in extra_cols:
+    #         if column in df.columns.to_list():
+    #             df2.insert(0, column, '')
+    #
+    #             for idx, row in df2.iterrows():
+    #                 unique_id2 = df2.loc[idx, 'unique_id2']
+    #                 value = df.loc[df['unique_id2'] == unique_id2, column].iloc[0]
+    #                 # print(idx, column, value)
+    #                 df2.at[idx, column] = value
+
+
     df3 = df3.drop(columns=['unique_id1', 'unique_id2'])
     # df3 = df3[nondate_columns, date_columns]
+
+    if sortby not in ['', None]:
+        df3 = df3.sort_values(by=sortby)
 
     # output converted dataframes
     df3.to_csv(output, sep='\t', index=False)
