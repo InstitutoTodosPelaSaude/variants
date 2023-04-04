@@ -38,23 +38,24 @@ if __name__ == '__main__':
     multiply = args.multiply[0]
     filter1 = args.filter1
     filter2 = args.filter2
-    sortby = args.sortby    
+    sortby = args.sortby
     output = args.output
 
 
-    # path = "/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/resp_pathogens/analyses/20230208_devsnake/results/state/"
-    # input1 = path + 'combined_matrix_state_posneg_weeks.tsv'
-    # input2 = path + 'combined_matrix_state_totaltests_weeks.tsv'
-    # unique_id1 = ['pathogen', 'state_code']
-    # unique_id2 = ['pathogen', 'state_code']
+    # path = "/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorio11_20230216/"
+    # input1 = path + 'matrix_total_lineages_country.tsv'
+    # input2 = path + 'matrix_total_allgenomes_country.tsv'
+    # unique_id1 = ['pango_lineage', 'code']
+    # unique_id2 = ['code']
     # norm_variable = ''
     # rate_factor = ''
     # rolling_avg = ''
     # multiply = 'no'
     # min_denominator = 50
-    # filter1 = 'test_result:Positive'
-    # filter2 = ''
-    # output = path + 'mock_combined.tsv'
+    # filter1 = "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea"
+    # filter2 = "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea"
+    # sortby = 'code'
+    # output = path + 'matrix_total_freqlin_country.tsv'
 
 
     def load_table(file):

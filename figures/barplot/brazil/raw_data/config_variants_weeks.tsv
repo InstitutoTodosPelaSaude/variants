@@ -7,7 +7,7 @@ y_label	Frequência de variantes\n(dados brutos)	# Y label Frequência de varian
 groupby	regiao	# column containing categories of data to be plotted as subplots
 plot_kind	bar	# type of plot: bar, barh
 filter		# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
-ignore_cols	code, 2022-10-01, 2022-10-08, 2022-10-15, 2022-10-22, 2022-10-29, 2022-11-05, 2022-11-12, 2022-11-19	# columns to be ignored in the line plot
+ignore_cols	code	# columns to be ignored in the line plot
 colour_by	who_variant	# variable to be represented in the colour scheme
 colour_scheme	../../../colors.tsv	# colour pallete, if colour file not provided
 plot_label	yes	# Plot label? (yes or no)

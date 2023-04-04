@@ -7,5 +7,5 @@ top_levels	code	# Upper subdivisions
 last_level	pango_lineage	# Main subdivision
 hover_data		# extra data to be shown while hovering the mouse
 title		# Title to be displayed at the top of the treemap
-filter	code:HKG, code:KOR, code:JPN, code:NZL, code:TWN, code:SVN, code:FRA, code:AUS, code:AUT, code:CYP, code:ITA, code:GRC, code:MUS, code:DEU, code:FIN, code:CHL, code:CHE, code:PRY, code:USA, code:URY, code:PER	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
+filter	code:HKG, code:JPN, code:TWN, code:KOR, code:NZL, code:SVN, code:AUT, code:FRA, code:AUS, code:CYP, code:ITA, code:DEU, code:MUS, code:USA, code:URY, code:CHL, code:FIN, code:SRB, code:SGP, code:LTU	# comma-separated list of rows to keep or remove rows. Format: '~column_name:value'. Remove '~' to keep only that data category.
 backend	Qt5Agg	# matplotlib backend (recommended: pdf, Qt5Agg). Options: 'GTK3Agg', 'GTK3Cairo', 'GTK4Agg', 'GTK4Cairo', 'MacOSX', 'nbAgg', 'QtAgg', 'QtCairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template'

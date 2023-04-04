@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import AnchoredText
 import matplotlib
 from matplotlib.ticker import MultipleLocator
 import matplotlib.ticker as ticker
@@ -20,10 +19,9 @@ if __name__ == '__main__':
     )
     parser.add_argument("--config", required=True, help="Configuration file in TSV format")
     args = parser.parse_args()
-
     config = args.config
 
-    # path = '/Users/Anderson/Library/CloudStorage/GoogleDrive-anderson.brito@itps.org.br/Outros computadores/My Mac mini/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorio10_20230105/figures/barplot/brazil/raw_data/'
+    # path = '/Users/anderson/google_drive/ITpS/projetos_itps/vigilanciagenomica/analyses/relatorio11_20230216/figures/barplot/brazil/nowcasting/'
     # os.chdir(path)
     # config = 'config_variants_weeks.tsv'
 
@@ -92,6 +90,7 @@ if __name__ == '__main__':
                     exclude[col] = [val]
                 else:
                     exclude[col].append(val)
+
         # print('Exclude:', exclude)
         for filter_col, filter_val in exclude.items():
             print('\t- Excluding all rows with \'' + filter_col + '\' = \'' + ', '.join(filter_val) + '\'')
@@ -175,8 +174,14 @@ if __name__ == '__main__':
     nrows = int(params.loc['nrows', 'value'])
     ncols = int(params.loc['ncols', 'value'])
 
-    legend_pos = params.loc['legend_position', 'value']
     column_legend = params.loc['column_legend', 'value']
+    legend_pos = params.loc['legend_position', 'value']
+    if legend_pos not in ['', None]:
+        if legend_pos == 'vertical':
+            ncols +=1
+        else:
+            nrows += 1
+
 
     # if legend_pos not in ['', None]:
     #     if legend_pos in ['left', 'right']:
@@ -238,7 +243,7 @@ if __name__ == '__main__':
         df2 = df2.transpose()
         categories = list([item for item in set(df[y_var].tolist())])
         df2 = df2[categories]
-        # print(df[y_var].tolist())
+        # print(df2)
 
         if nrows >= 2 and ncols >= 2:
             ax = axes[i // ncols][i % ncols]
@@ -273,12 +278,12 @@ if __name__ == '__main__':
         # labels
         x_label = params.loc['x_label', 'value'].replace('\\n', '\n')
         y_label = params.loc['y_label', 'value'].replace('\\n', '\n')
-        ax.set_xlabel(x_label, fontsize=8)
-        ax.set_ylabel(y_label, fontsize=8)
+        ax.set_xlabel(x_label, fontsize=10)
+        ax.set_ylabel(y_label, fontsize=10)
 
         # plot title
         plot_label = params.loc['plot_label', 'value']
-        if plot_label not in ['', None]:
+        if plot_label not in ['', None, 'no']:
             ax.set_title(name, fontsize=10)
 
         # if scale == 'absolute':
@@ -291,16 +296,22 @@ if __name__ == '__main__':
             for axis in show_grid.split(','):
                 ax.grid(axis=axis.strip(), zorder=0)
 
-        tick_every = int(params.loc['tick_every', 'value'])
+        # tick_every = int(params.loc['tick_every', 'value'])
         # if plot_kind == 'bar':
         #     if scale == 'absolute':
         #         ax.xaxis.set_minor_locator(MultipleLocator())
         #         ax.xaxis.set_major_locator(MultipleLocator(tick_every))
         # if plot_kind == 'barh':
 
-        if tick_every not in ['', None]:
-            ax.xaxis.set_major_locator(MultipleLocator(tick_every))
-            ax.xaxis.set_minor_locator(MultipleLocator(tick_every/tick_every))
+        xtick_every = int(params.loc['xtick_every', 'value'])
+        if xtick_every not in ['', None]:
+            ax.xaxis.set_major_locator(MultipleLocator(xtick_every))
+            ax.xaxis.set_minor_locator(MultipleLocator(xtick_every/xtick_every))
+
+        ytick_every = int(params.loc['ytick_every', 'value'])
+        if ytick_every not in ['', None]:
+            ax.yaxis.set_major_locator(MultipleLocator(ytick_every))
+            ax.yaxis.set_minor_locator(MultipleLocator(ytick_every/2))
 
 
         # plt.xticks(ticklabels, rotation=90)
@@ -313,27 +324,29 @@ if __name__ == '__main__':
         max_y = params.loc['max_y', 'value']
         if max_y not in ['', None]:
             max_y = float(max_y)
+            # print(max_y)
 
         log_scale = params.loc['log_scale', 'value']
         if log_scale == 'yes':
             ax.set_yscale('log')
-            min_y = np.log(min_y)
-            min_y = np.log(min_y)
+            # min_y = np.log(min_y)
+            # min_y = np.log(min_y)
             ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y,pos: ('{{:.{:1d}f}}'.format(int(np.maximum(-np.log10(y),0)))).format(y)))
 
         if str(min_y) + str(max_y) not in ['', None]:
             if min_y in ['', None]:
-                ax.set_ylim(ymin=None, ymax=max_y)
+                ax.set_ylim(top=max_y)
+                # print(max_y)
             elif max_y in ['', None]:
-                ax.set_ylim(ymin=min_y, ymax=None)
+                ax.set_ylim(bottom=min_y)
             else:
-                ax.set_ylim(ymin=min_y, ymax=max_y)
+                ax.set_ylim(bottom=min_y, top=max_y)
 
         if scale == 'relative':
             ax.set_ylim(0, 100)
             ax.yaxis.set_major_formatter(mtick.PercentFormatter())
 
-        ax.yaxis.set_tick_params(which='minor', bottom=False)
+        # ax.yaxis.set_tick_params(which='minor', bottom=False)
 
     # ax.axhline(y=np.log(1000), color='#ABABAB', linestyle='--', lw=0.5)
     # handles, labels = ax.get_legend_handles_labels()
@@ -350,6 +363,9 @@ if __name__ == '__main__':
     # print(len(axes))
     # print(axes)
     # print(type(axes[0]))
+
+    # fix empty axes
+    # if nrows > 1 or ncols > 1:
     if type(axes[0]) == np.ndarray: # more than 2 columns and rows
         for axset in axes:
             # print(len(axes))
@@ -370,8 +386,6 @@ if __name__ == '__main__':
             # print(ax)
             cur_ax = (i // ncols, i % ncols)
 
-            # print(cur_ax)
-            # print(used_axes)
             if cur_ax not in used_axes:
                 axes[i].axis('tight')
                 axes[i].axis('off')
