@@ -14,8 +14,8 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2022-09-25",
-		end_date = "2023-01-28",
+		start_date = "2022-12-04",
+		end_date = "2023-02-11",
 		unit = "week"
 
 arguments = rules.arguments.params
@@ -453,6 +453,35 @@ rule variant_matrix_run:
 
 
 
+
+# rule nowcasting:
+# 	message:
+# 		"""
+# 		Perform nowcasting of SARS-CoV-2 variants
+# 		"""
+# 	input:
+# 		xxxxx = arguments.xxxxx,
+# 		xxxxx = arguments.xxxxx,
+# 	params:
+# 		xxxxx = arguments.xxxxx,
+# 		xxxxx = arguments.xxxxx,
+# 		xxxxx = arguments.xxxxx,
+# 	output:
+# 		matrix = "xxxxx"
+# 	shell:
+# 		"""
+# 		python3 scripts/xxxx.py \
+# 			--metadata {input.xxxx} \
+# 			--filters {input.xxxx} \
+# 			--index-column {params.xxxx} \
+# 			--extra-columns {params.xxxx} \
+# 			--date-column {params.xxxx} \
+# 			--output {output.xxxx}
+# 		"""
+
+
+
+
 rule lininc_global:
 	message:
 		"""
@@ -496,7 +525,8 @@ rule lininc_global:
 			--input2 {output.gentotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
-			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
+			--filter1 "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
+			--filter2 "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
 			--output {output.linfreq}
 
 		python3 scripts/matrix_operations.py \
@@ -504,7 +534,8 @@ rule lininc_global:
 			--input2 {output.inctotal} \
 			--index1 {params.index1} \
 			--index2 {params.index2} \
-			--filter "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
+			--filter1 "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
+			--filter2 "~country:Curacao, ~country:Sint Maarten, ~country:Guernsey, ~country:Jersey, ~country:Canary Islands, ~country:Crimea" \
 			--multiply "yes" \
 			--output {output.lininc}
 		"""
