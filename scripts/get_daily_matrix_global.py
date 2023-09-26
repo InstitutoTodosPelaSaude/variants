@@ -22,172 +22,133 @@ import pycountry
 import argparse
 import time
 from datetime import datetime, timedelta
+import numpy as np
 
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
+DATA_SOURCE = 'https://covid19.who.int/WHO-COVID-19-global-data.csv'
+COUNTRIES_TO_REMOVE = []
+COUNTRY_NAMES_TO_FIX = {'Kosovo[1]': 'Kosovo'}
+COUNTRIES_TO_MERGE = {'Bonaire, Sint Eustatius and Saba': ['Bonaire', 'Sint Eustatius', 'Saba']}
+COUNTRY_CODES_TO_FORCE = {'Kosovo': 'XKX'}
+
+def check_date_format(date: str) -> str:
+    """
+    Check if date is in YYYY-MM-DD format
+    """
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+        return date
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Download and reformat epidemiological data from CSSE, Johns Hopkins University",
+        description="Download and reformat epidemiological data from World Health Organization",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--input", required=False, help="Johns Hopkins, global daily case counts file")
-    parser.add_argument("--download", required=True, nargs=1, type=str, default='yes',
-                        choices=['yes', 'no'], help="Download data from Johns Hopkins University?")
-    parser.add_argument("--data-type", required=False, nargs=1, type=str, default='cases',
+    parser.add_argument("--type", required=False, nargs=1, type=str, default='cases',
                         choices=['cases', 'deaths'], help="Should values in target column be summed up?")
-    parser.add_argument("--start-date", required=False, type=str,  help="Start date in YYYY-MM-DD format")
-    parser.add_argument("--end-date", required=False, type=str,  help="End date in YYYY-MM-DD format")
-    parser.add_argument("--keep-original", required=False, nargs=1, type=str, default='no',
-                        choices=['yes', 'no'], help="Download data from Johns Hopkins University?")
+    parser.add_argument("--start-date", required=False, type=check_date_format,  help="Start date in YYYY-MM-DD format")
+    parser.add_argument("--end-date", required=False, type=check_date_format,  help="End date in YYYY-MM-DD format")
     parser.add_argument("--output", required=True, help="TSV with daily counts")
     args = parser.parse_args()
 
-    # input = 'time_series_covid19_confirmed_US.csv'
-    # start_date = '2019-12-24' # start date of period of interest
-    # end_date = '2020-09-30' # end date of period of interest
-    # separator = ','
-
-    download = args.download[0]
-    data_type = args.data_type[0]
+    # Get arguments
+    data_type = args.type[0]
     start_date = args.start_date
     end_date = args.end_date
-    keep_original = args.keep_original
     output = args.output
     path = os.getcwd()
 
-    filename = ''
-    if download == 'yes':
-        if data_type == 'cases':
-            filename = 'time_series_covid19_global.csv'
-            if filename not in os.listdir(path):
-                url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
-                os.system('wget %s' % url)
-                os.system('mv %s %s' % (url.split('/')[-1], filename))
-            df = pd.read_csv(filename, encoding='utf-8', sep=',', dtype='str')
-            if keep_original != 'yes':
-                os.system('rm %s' % filename)
-        else:
-            filename = 'time_series_covid19_deaths_global.csv'
-            if filename not in os.listdir(path):
-                url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
-                os.system('wget %s' % url)
-                os.system('mv %s %s' % (url.split('/')[-1], filename))
-            df = pd.read_csv(filename, encoding='utf-8', sep=',', dtype='str')
-            if keep_original != 'yes':
-                os.system('rm %s' % filename)
-    else:
-        input = args.input
-        df = pd.read_csv(input, encoding='utf-8', sep=',', dtype='str')
+    if start_date and end_date:
+        assert start_date <= end_date, 'start-date must be before end-date'
 
+    # Download raw data from World Health Organization and save it as a pandas dataframe
+    covid_df = pd.read_csv(DATA_SOURCE, keep_default_na=False)
+    
+    # Some adjustments to the dataframe
+    covid_df['Date_reported'] = pd.to_datetime(covid_df['Date_reported'], format='%Y-%m-%d')
+    covid_df['Country_code'].replace(' ', np.NaN, inplace=True)
+    covid_df.drop(columns=['WHO_region', 'Cumulative_cases', 'Cumulative_deaths'], inplace=True)
+    covid_df.rename(columns={'Country_code': 'code', 'Country': 'country'}, inplace=True)
 
-    remove = ['Diamond Princess', 'MS Zaandam', 'Channel Islands', 'Pitcairn Islands', 'Summer Olympics 2020', 'Winter Olympics 2022']
-    fix_names = {'Congo (Brazzaville)': 'Congo', 'Congo (Kinshasa)': 'Democratic Republic of the Congo',
-                 'St Martin': 'Saint Martin', 'Korea, South': 'South Korea', 'Taiwan*': 'Taiwan',
-                 'West Bank and Gaza': 'Palestine', 'Burma': 'Myanmar', 'Korea, North': 'North Korea',
-                 '"Bonaire, Sint Eustatius and Saba"': 'Bonaire'}
+    # Check data quality
+    assert covid_df['Date_reported'].dt.year.min() == 2020, 'Date before 2020 found'
+    assert covid_df['Date_reported'].dt.year.max() <= datetime.now().year, 'Date in the future found'
+    assert covid_df.query('country != "Other"')['code'].isnull().sum() == 0, 'Country with no country code found'
+    assert covid_df.query('country == "Other"')['code'].notna().sum() == 0, 'Country "Other" has country code'
+    assert covid_df.groupby(['code'])['country'].unique().apply(lambda x: len(x)).max() == 1, 'Country code has multiple countries'
+    assert covid_df['country'].isnull().sum() == 0, 'country is null'
+    assert covid_df.groupby(['country'])['code'].unique().apply(lambda x: len(x)).max() == 1, 'Country has multiple country codes'
 
-    # list of date columns
-    date_columns = [column for column in df.columns.to_list() if column[0].isdecimal()]
-    df = df[['Country/Region', 'Province/State'] + date_columns]
-    df.fillna('', inplace=True)
-    df.insert(2, 'code', '')
+    # Filter by date
+    if start_date is not None:
+        covid_df = covid_df[covid_df['Date_reported'] >= start_date]
+    if end_date is not None:
+        covid_df = covid_df[covid_df['Date_reported'] <= end_date]
 
-    # drop unwanted rows
-    df = df[~df['Country/Region'].isin(remove)]
-    df = df[~df['Province/State'].isin(remove)]
+    # Drop unnecessary columns
+    metric_column = 'New_cases' if data_type == 'cases' else 'New_deaths'
+    covid_df = covid_df[['Date_reported', 'code', 'country', metric_column]]
 
-    # rename unusual country and territory names
-    df['Country/Region'].replace(fix_names, inplace=True)
-    df['Province/State'].replace(fix_names, inplace=True)
+    # Create matrix with countries as rows and dates as columns
+    covid_df = covid_df.set_index(['code', 'country', 'Date_reported']).unstack('Date_reported')
+    covid_df.columns = covid_df.columns.droplevel(0)
+    covid_df.columns = covid_df.columns.strftime('%Y-%m-%d')
+    covid_df = covid_df.reset_index().rename_axis(None, axis=1)
 
+    # Drop rows with unwanted countries
+    if COUNTRIES_TO_REMOVE:
+        assert isinstance(COUNTRIES_TO_REMOVE, list), 'COUNTRIES_TO_REMOVE must be a list'
+        covid_df = covid_df[~covid_df['country'].isin(COUNTRIES_TO_REMOVE)]
 
-    # rename column names and drop columns out of date range
-    today = time.strftime('%Y-%m-%d', time.gmtime())
-    if start_date == None:
-        start_date = pd.to_datetime([col for col in df.columns.to_list() if col[0].isdecimal()]).min()
-    else:
-        start_date = pd.to_datetime(start_date) - timedelta(days=1) # start one day before the selected date
-    if end_date == None:
-        end_date = today
+    # Rename unusual country and territory names
+    if COUNTRY_NAMES_TO_FIX:
+        assert isinstance(COUNTRY_NAMES_TO_FIX, dict), 'COUNTRY_NAMES_TO_FIX must be a dictionary'
+        covid_df['country'].replace(COUNTRY_NAMES_TO_FIX, inplace=True)
 
-    for column in df.columns.to_list():
-        if column[0].isdecimal():
-            date = pd.to_datetime(column)
-            if date >= pd.to_datetime(start_date) and date <= pd.to_datetime(end_date):
-                new_column = date.strftime('%Y-%m-%d')
-                df = df.rename(columns={column: new_column})
-                df[new_column] = df[new_column].astype(int)
-            else:
-                df = df.drop(columns=[column])
+    # Merge countries
+    if COUNTRIES_TO_MERGE:
+        assert isinstance(COUNTRIES_TO_MERGE, dict), 'COUNTRIES_TO_MERGE must be a dictionary'
+        for country, countries_to_merge in COUNTRIES_TO_MERGE.items():
+            assert isinstance(countries_to_merge, list), 'COUNTRIES_TO_MERGE must be a dictionary of lists'
+            assert all([c in covid_df['country'].unique() for c in countries_to_merge]), f'One of {countries_to_merge} not found in dataframe'
 
-    # get ISO alpha3 country codes
-    isos = {'Kosovo': 'XKX'}
-    def get_iso(country):
-        global isos
-        if country not in isos.keys():
-            try:
-                isoCode = pyCountry.country_name_to_country_alpha3(country, cn_name_format="default")
-                isos[country] = isoCode
-            except:
-                try:
-                    isoCode = pycountry.countries.search_fuzzy(country)[0].alpha_3
-                    isos[country] = isoCode
-                except:
-                    isos[country] = ''
-        return isos[country]
+            # Change country names
+            for c in countries_to_merge:
+                covid_df.loc[covid_df['country'] == c, 'code'] = np.NaN
+                covid_df.loc[covid_df['country'] == c, 'country'] = country
 
+            # Sum values
+            covid_df = covid_df.groupby(['country']).sum().reset_index()
 
-    # add iso code
-    df['code'] = df['Country/Region'].map(get_iso)
+    # Map ISO alpha2 country codes to ISO alpha3 country codes
+    # First try: use pycountry library
+    iso2_to_iso3_map = {country.alpha_2: country.alpha_3 for country in pycountry.countries}
+    covid_df['code'] = covid_df['code'].map(iso2_to_iso3_map)
 
-    # country dependencies
-    has_dependencies = ['United Kingdom', 'France', 'Denmark', 'Netherlands']
-    is_autonomous = ['Hong Kong']#, 'Curacao', 'Sint Maarten', 'Bonaire']
-    for idx, row in df.iterrows():
-        country = df.loc[idx, 'Country/Region']
-        province = df.loc[idx, 'Province/State']
-        iso = df.loc[idx, 'code']
-        if province in is_autonomous:
-            df.loc[idx, 'Country/Region'] = province
-            df.loc[idx, 'code'] = get_iso(province)
+    # Second try: use pycountry_convert library searching by country name
+    countries_with_no_code = covid_df.query('country != "Other" and code.isnull()', engine='python')['country'].unique()
+    for country in countries_with_no_code:
+        try:
+            code = pyCountry.country_name_to_country_alpha3(country)
+            covid_df.loc[covid_df['country'] == country, 'code'] = code
+        except Exception as e:
+            pass
+    
+    # Third try: use COUNTRY_CODES_TO_FORCE dictionary to force country codes
+    if COUNTRY_CODES_TO_FORCE:
+        assert isinstance(COUNTRY_CODES_TO_FORCE, dict), 'COUNTRY_CODES_TO_FORCE must be a dictionary'
+        for country, code in COUNTRY_CODES_TO_FORCE.items():
+            covid_df.loc[covid_df['country'] == country, 'code'] = code
 
-        if province not in '' and country in has_dependencies:
-            # print(country, province)
-            if get_iso(province) == get_iso(country):
-                continue
-            else:
-                df.loc[idx, 'Country/Region'] = province
-                df.loc[idx, 'code'] = get_iso(province)
+    # Check final dataframe data quality
+    assert covid_df.query('country != "Other"')['code'].isnull().sum() == 0, 'Final dataframe has null codes'
+    assert covid_df['code'].duplicated().sum() == 0, 'Final dataframe has duplicated codes'
+    assert covid_df.query('country != "Other"')['country'].isnull().sum() == 0, 'Final dataframe has null countries'
+    assert covid_df['country'].duplicated().sum() == 0, 'Final dataframe has duplicated countries'
+    assert covid_df.drop(columns=['code', 'country']).isnull().sum().sum() == 0, 'Final dataframe has null values'
 
-
-    df = df.drop(columns=['Province/State']) # drop unwanted columns
-    df = df.rename(columns={'Country/Region': 'country'})
-
-    # group by country name, summing up values
-    df = df.groupby(['code', 'country'], as_index=False).sum()
-
-    date_columns = [column for column in df.columns.to_list() if column[0].isdecimal()][::-1]
-
-    # print(date_columns)
-    # print(date_columns[::-1])
-
-    # convert cumulative counts into daily counts
-    for num, col in enumerate(date_columns):
-        # print(num, col)
-        if num < len(date_columns)-1:
-            # print(num, len(date_columns), date_columns[len(date_columns)-1])
-            for idx, row_value in df[col].iteritems():
-                country = df.loc[idx, 'code']
-                daily_count = int(row_value) - int(df[date_columns[num+1]][idx])
-                if daily_count < 0:
-                    daily_count = 0
-                df.loc[idx, date_columns[num]] = daily_count
-                # print(country, date_columns[num], daily_count)#, int(row_value), int(df[date_columns[num+1]][idx]))
-
-    df = df.drop(columns=[start_date.strftime('%Y-%m-%d')])
-
-    # save processed metadata
-    df.to_csv(output, sep='\t', index=False)
+    # Save dataframe as TSV file
+    assert output.endswith('.tsv'), 'Output file must end with .tsv extension'
+    covid_df.to_csv(output, sep='\t', index=False)
     print('\nOutput successfully exported: ' + output + '\n')
