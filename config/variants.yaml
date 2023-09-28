@@ -3,6 +3,7 @@ name: var
 channels:
 - defaults
 - conda-forge
+- bioconda
 
 dependencies:
 - fiona
