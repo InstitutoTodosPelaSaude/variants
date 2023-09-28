@@ -67,6 +67,8 @@ if __name__ == '__main__':
         # browser = webdriver.Firefox(service=s, options=options)
         browser.get('https://covid.saude.gov.br')
         browser.find_element(By.XPATH, '/html/body/app-root/ion-app/ion-router-outlet/app-home/ion-content/div[1]/div[2]/ion-button').click()
+        print('\t\t- Done!')
+        browser.close()
     else:
         os.system("mkdir " + download_dir)
         os.system("cp " + infile + " " + download_dir)
@@ -75,9 +77,9 @@ if __name__ == '__main__':
     arqbr_rar = ""
     while arqbr_rar == "":
         # arqbr_rar = (','.join(glob.glob(path + 'temp/br_rar/*.rar')))
-        arqbr_rar = (','.join(glob.glob(download_dir + '*.rar')))
+        arqbr_rar = (','.join(glob.glob(download_dir + '*.zip')))
 
-    browser.close()
+#    browser.close()
     print('\n\t- Decompressing data files...')
     # patoolib.extract_archive(arqbr_rar, outdir=(path + 'temp/br_rar'))
     patoolib.extract_archive(arqbr_rar, outdir=(download_dir))
