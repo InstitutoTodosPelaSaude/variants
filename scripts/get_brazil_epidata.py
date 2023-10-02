@@ -17,7 +17,7 @@ import os
 import os.path
 import patoolib
 import argparse
-
+import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -66,7 +66,9 @@ if __name__ == '__main__':
         browser = webdriver.Firefox(options=options, service=s)
         # browser = webdriver.Firefox(service=s, options=options)
         browser.get('https://covid.saude.gov.br')
+        time.sleep(5)
         browser.find_element(By.XPATH, '/html/body/app-root/ion-app/ion-router-outlet/app-home/ion-content/div[1]/div[2]/ion-button').click()
+        time.sleep(20)
         print('\t\t- Done!')
         browser.close()
     else:
