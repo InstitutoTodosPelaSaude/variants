@@ -122,6 +122,10 @@ if __name__ == '__main__':
     covid_df = covid_df[['Date_reported', 'code', 'country', metric_column]]
     logger.info(f"Using {metric_column} column as metric")
 
+    # Remove negative values from metric column and convert it to zero
+    logger.info(f"Removing {covid_df[covid_df[metric_column] < 0].shape[0]} negative values from metric column")
+    covid_df.loc[covid_df[metric_column] < 0, metric_column] = 0
+
     # Create matrix with countries as rows and dates as columns
     covid_df = covid_df.set_index(['code', 'country', 'Date_reported']).unstack('Date_reported')
     covid_df.columns = covid_df.columns.droplevel(0)
@@ -188,6 +192,7 @@ if __name__ == '__main__':
     assert covid_df.query('country != "Other"')['country'].isnull().sum() == 0, 'Final dataframe has null countries'
     assert covid_df['country'].duplicated().sum() == 0, 'Final dataframe has duplicated countries'
     assert covid_df.drop(columns=['code', 'country']).isnull().sum().sum() == 0, 'Final dataframe has null values'
+    assert covid_df.drop(columns=['code', 'country']).applymap(lambda x: isinstance(x, int) and x >= 0).all().all(), 'Final dataframe has negative values'
     logger.info("Final dataframe data quality check passed")
 
     # Save dataframe as TSV file
