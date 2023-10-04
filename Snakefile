@@ -14,8 +14,8 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2023-07-16",
-		end_date = "2023-09-23",
+		start_date = "2023-07-23",
+		end_date = "2023-09-30",
 		unit = "week"
 
 arguments = rules.arguments.params
@@ -32,7 +32,6 @@ rule all:
 		snakemake --cores all lininc_brazil
 		snakemake --cores all colors
 		snakemake --cores all copy_files
-		snakemake --cores all dataviz
 		"""
 
 
