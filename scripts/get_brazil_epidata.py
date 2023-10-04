@@ -59,32 +59,45 @@ if __name__ == '__main__':
     options.set_preference("browser.download.manager.alertOnEXEOpen", False)
     options.set_preference("browser.download.alwaysOpenPanel", False)
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "attachment/csv")
+    # Avoid opening browser
+    options.add_argument('--headless')
 
     if download == 'yes':
         print('\t- Downloading compressed epidata from covid.saude.gov.br ...')
         s = Service(path + 'config/geckodriver')
         browser = webdriver.Firefox(options=options, service=s)
-        # browser = webdriver.Firefox(service=s, options=options)
+
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+
+        previous_file_quantity = len(os.listdir(download_dir))
+
         browser.get('https://covid.saude.gov.br')
-        time.sleep(5)
+        time.sleep(10)
         browser.find_element(By.XPATH, '/html/body/app-root/ion-app/ion-router-outlet/app-home/ion-content/div[1]/div[2]/ion-button').click()
-        time.sleep(20)
+        
+        # Check if file is already downloaded
+        while len(os.listdir(download_dir)) == previous_file_quantity:
+            time.sleep(5)
+            print('\t\t- Waiting for download to finish...')
+
         print('\t\t- Done!')
         browser.close()
     else:
         os.system("mkdir " + download_dir)
         os.system("cp " + infile + " " + download_dir)
 
-    # rar file download
-    arqbr_rar = ""
-    while arqbr_rar == "":
-        # arqbr_rar = (','.join(glob.glob(path + 'temp/br_rar/*.rar')))
-        arqbr_rar = (','.join(glob.glob(download_dir + '*.zip')))
+    # Get compressed files (.rar or .zip) from download directory
+    all_files = os.listdir(download_dir)
+    compressed_files = [download_dir + file for file in all_files if file.endswith('.rar') or file.endswith('.zip')]
 
-#    browser.close()
-    print('\n\t- Decompressing data files...')
+    # Get the most recent file
+    most_recent_file = max(compressed_files, key=os.path.getctime)
+
+    print(f'\n\t- Decompressing data files from {most_recent_file}...')
+    
     # patoolib.extract_archive(arqbr_rar, outdir=(path + 'temp/br_rar'))
-    patoolib.extract_archive(arqbr_rar, outdir=(download_dir))
+    patoolib.extract_archive(most_recent_file, outdir=(download_dir))
 
     # create list to append
     li = []
