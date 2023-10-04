@@ -1,0 +1,43 @@
+name: var
+
+channels:
+- defaults
+- conda-forge
+- bioconda
+
+dependencies:
+- fiona
+- shapely
+- rasterio
+- pyproj
+- pandas==1.5.3
+- geopandas
+- pyqt
+- beautifulsoup4
+- unidecode
+- selenium=4.13.0
+- xlrd
+- snakemake-minimal
+- pip
+- seaborn
+- openpyxl
+- tabulate
+
+- r-base
+- r-nnet
+- r-tidyverse
+- r-vroom
+- r-foreign
+- r-effects
+- r-argparser
+- r-dirichletreg
+- r-ggforce
+- r-geofacet
+
+- pip:
+  - epiweeks
+  - pycountry-convert
+  - patool
+  - lxml
+  - colour
+  - plotly
