@@ -10,12 +10,12 @@ dependencies:
 - shapely
 - rasterio
 - pyproj
-- pandas
+- pandas==2.0.3
 - geopandas
 - pyqt
 - beautifulsoup4
 - unidecode
-- selenium
+- selenium=4.13.0
 - xlrd
 - snakemake-minimal
 - pip

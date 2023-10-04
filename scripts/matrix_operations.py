@@ -105,7 +105,7 @@ if __name__ == '__main__':
             # print(new_df.size)
             if new_df.empty:
                 df_filtered = df[df[filter_col].isin(filter_val)]
-                new_df = new_df.append(df_filtered)
+                new_df = new_df._append(df_filtered)
             else:
                 new_df = new_df[new_df[filter_col].isin(filter_val)]
             # print(new_df)#.head())
@@ -128,7 +128,7 @@ if __name__ == '__main__':
             print('\t- Excluding all rows with \'' + filter_col + '\' = \'' + ', '.join(filter_val) + '\'')
             if new_df.empty:
                 df = df[~df[filter_col].isin(filter_val)]
-                new_df = new_df.append(df)
+                new_df = new_df._append(df)
             else:
                 new_df = new_df[~new_df[filter_col].isin(filter_val)]
             # print(new_df)#.head())

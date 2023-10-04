@@ -124,14 +124,14 @@ if __name__ == '__main__':
                 if col not in include:
                     include[col] = [val]
                 else:
-                    include[col].append(val)
+                    include[col]._append(val)
         # print('Include:', include)
         for filter_col, filter_val in include.items():
             print('\t- Including only rows with \'' + filter_col + '\' = \'' + ', '.join(filter_val) + '\'')
             # print(new_df.size)
             if new_df.empty:
                 df_filtered = df[df[filter_col].isin(filter_val)]
-                new_df = new_df.append(df_filtered)
+                new_df = new_df._append(df_filtered)
             else:
                 new_df = new_df[new_df[filter_col].isin(filter_val)]
             # print(new_df)#.head())
@@ -148,13 +148,13 @@ if __name__ == '__main__':
                 if col not in exclude:
                     exclude[col] = [val]
                 else:
-                    exclude[col].append(val)
+                    exclude[col]._append(val)
         # print('Exclude:', exclude)
         for filter_col, filter_val in exclude.items():
             print('\t- Excluding all rows with \'' + filter_col + '\' = \'' + ', '.join(filter_val) + '\'')
             if new_df.empty:
                 df = df[~df[filter_col].isin(filter_val)]
-                new_df = new_df.append(df)
+                new_df = new_df._append(df)
             else:
                 new_df = new_df[~new_df[filter_col].isin(filter_val)]
         return new_df

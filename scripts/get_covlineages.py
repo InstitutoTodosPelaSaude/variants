@@ -70,7 +70,7 @@ if __name__ == '__main__':
     dfJ = pd.DataFrame()
     for lineage in json_data:
         entry = {k: json_data[lineage][k] for k in ['Lineage', 'Description']}
-        dfJ = dfJ.append(entry, ignore_index=True)
+        dfJ = dfJ._append(entry, ignore_index=True)
     dfJ = dfJ.rename(columns={'Lineage': 'pango_lineage'})
     # print(dfJ)
 
