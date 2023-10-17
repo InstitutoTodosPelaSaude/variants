@@ -75,15 +75,6 @@ if __name__ == '__main__':
         return df
 
 
-
-    categories = {}
-    for line in open(covlineages, "r").readlines()[1:]:
-        variant, lineages = line.strip().split('\t')
-        if '*' not in variant:
-            categories[lineages] = variant
-    # print(categories)
-
-
     # nextstrain metadata
     df = load_table(metadata)
 
@@ -174,13 +165,24 @@ if __name__ == '__main__':
     variants = {}
     for line in open(variants_list, "r").readlines()[1:]:
         variant, lineage = line.strip().split('\t')
-        # print(variant, lineage)
         if '*' in variant:
             variants[lineage] = variant
-        elif variant == 'Recombinante':
-            variants[lineage] = variant
+            # print(variant, lineage)
+        # elif variant == 'Recombinante':
+        #     variants[lineage] = variant
         else:
             pass
+    # print(variants)
+
+
+    categories = {}
+    for line in open(covlineages, "r").readlines()[1:]:
+        variant, lineages = line.strip().split('\t')
+        if '*' not in variant:
+            # print(variant, lineages)
+            categories[lineages] = variant
+    # print(categories)
+
 
     # add tag of variant category
     print('\t- Adding WHO variant information')
@@ -193,13 +195,14 @@ if __name__ == '__main__':
 
     def variant_category(variant):
         var_category = 'Outras'
-        if 'Recombinante' in variant:
-            var_category = 'Recombinante'
-        else:
-            for var, cat in categories.items():
-                if variant == var:
-                    # var_category = categories[variant]
-                    var_category = cat
+        # if 'Recombinante' in variant:
+        #     var_category = 'Recombinante'
+        # else:
+        # print(categories)
+        for var, cat in categories.items():
+            if variant == var:
+                # var_category = categories[variant]
+                var_category = cat
         return var_category
 
 

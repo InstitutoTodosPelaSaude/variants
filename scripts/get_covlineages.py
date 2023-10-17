@@ -82,10 +82,14 @@ if __name__ == '__main__':
     special_lineages = {}
     inv_special = {}
     for l in alias_data:
-        if not l.startswith('X'):
-            if alias_data[l] != '':
-                special_lineages[l] = alias_data[l]
+        # if not l.startswith('X'):
+        # print(l)
+        if alias_data[l] != '':
+            special_lineages[l] = alias_data[l]
+            if type(alias_data[l]) == str:
                 inv_special[alias_data[l]] = l
+            else:
+                pass
 
     # open output file
     df3 = pd.DataFrame(columns=['who_variant', 'pango_lineage'])
@@ -125,20 +129,22 @@ if __name__ == '__main__':
             df2 = df2[['pango_lineage', 'who_variant']]
             df2 = df2[~df2['pango_lineage'].isin(df3['pango_lineage'].tolist())]
             print(', '.join(df2['pango_lineage'].tolist()))
-        else:
-            if pango_name.startswith('X'):  # recombinant
-                print('\nSublineages of ' + who_name + ' (' + pango_name + '):')
+        # else:
+        #     print('###')
+        #     if pango_name.startswith('X'):  # recombinant
+        #         print('\nSublineages of ' + who_name + ' (' + pango_name + '):')
 
-                base = pd.DataFrame(columns=['pango_lineage', 'Description'])
-                root = dfJ[dfJ['pango_lineage'].str.startswith(pango_name)]
+        #         base = pd.DataFrame(columns=['pango_lineage', 'Description'])
+        #         root = dfJ[dfJ['pango_lineage'].str.startswith(pango_name)]
 
-                frames = [base, root.sort_values(by='pango_lineage')]
-                df2 = pd.concat(frames)
-                df2['who_variant'] = who_name
+        #         frames = [base, root.sort_values(by='pango_lineage')]
+        #         df2 = pd.concat(frames)
+        #         df2['who_variant'] = who_name
 
-                df2 = df2[['pango_lineage', 'who_variant']]
-                print(', '.join(df2['pango_lineage'].tolist()))
-
+        #         df2 = df2[['pango_lineage', 'who_variant']]
+        #         print(', '.join(df2['pango_lineage'].tolist()))
+        #     else:
+        #         print(pango_name)
         df3 = pd.concat([df3, df2], ignore_index=True)
 
 
