@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument("--download", required=False, nargs=1, type=str, default='yes',
                         choices=['yes', 'no'], help="Download case data from covid.gov.br?")
     parser.add_argument("--file", required=False, help="Compressed .rar file from covid.gov.br")
+    parser.add_argument("--driver", required=True, help="Path where the geckodriver is located")
     parser.add_argument("--output", required=True, help="TSV file with aggregated COVID-19 cases and deaths in Brazil")
     args = parser.parse_args()
 
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     output = args.output
     infile = args.file
     download = args.download
+    geckodriver = args.driver
     path = os.path.abspath(os.getcwd()) + '/'
 
     # setting for download
@@ -59,12 +61,13 @@ if __name__ == '__main__':
     options.set_preference("browser.download.manager.alertOnEXEOpen", False)
     options.set_preference("browser.download.alwaysOpenPanel", False)
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "attachment/csv")
+    
     # Avoid opening browser
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
 
     if download == 'yes':
         print('\t- Downloading compressed epidata from covid.saude.gov.br ...')
-        s = Service(path + 'config/geckodriver')
+        s = Service(path + geckodriver)#'config/geckodriver_mac')
         browser = webdriver.Firefox(options=options, service=s)
 
         if not os.path.exists(download_dir):
@@ -82,12 +85,14 @@ if __name__ == '__main__':
             print('\t\t- Waiting for download to finish...')
 
         print('\t\t- Done!')
-        browser.close()
+        # browser.quit()
+        print('\t- Browser closed!')
     else:
         os.system("mkdir " + download_dir)
         os.system("cp " + infile + " " + download_dir)
 
     # Get compressed files (.rar or .zip) from download directory
+    print('\t- Choosing most recent file...')
     all_files = os.listdir(download_dir)
     compressed_files = [download_dir + file for file in all_files if file.endswith('.rar') or file.endswith('.zip')]
 

@@ -14,9 +14,10 @@ rule arguments:
 		correction_file = "config/fix_values.xlsx",
 		filters = "config/filters.tsv",
 		date_column = "date",
-		start_date = "2023-07-23",
-		end_date = "2023-09-30",
-		unit = "week"
+		start_date = "2023-08-13",
+		end_date = "2023-10-21",
+		unit = "week",
+		driver = "config/geckodriver_mac"
 
 arguments = rules.arguments.params
 
@@ -32,6 +33,7 @@ rule all:
 		snakemake --cores all lininc_brazil
 		snakemake --cores all colors
 		snakemake --cores all copy_files
+#		snakemake --cores all dataviz
 		"""
 
 
@@ -109,12 +111,15 @@ rule covid_saude:
 		"""
 		Download epidemiological data from covid.saude.gov.br
 		"""
+	params:
+		driver = arguments.driver,
 	output:
 		matrix_brazil = "data/matrix_full_brazil_epidata.tsv",
 
 	shell:
 		"""
 		python3 scripts/get_brazil_epidata.py \
+			--driver {params.driver}
 			--output {output.matrix_brazil}
 		"""
 
@@ -183,10 +188,10 @@ rule brazil_epidata_run:
 			--targets \"{params.targets}\" \
 			--output {output.matrix2}
 
-		sed -i 's/estado/uf_sigla/' {output.matrix2}
-		sed -i 's/DS_NOMEPAD_macsaud/macsaud/' {output.matrix2}
-		sed -i 's/CO_MACSAUD/macsaud_code/' {output.matrix2}
-		sed -i 's/DS_NOME/estado/' {output.matrix2}
+		sed -i "" 's/estado/uf_sigla/' {output.matrix2}
+		sed -i "" 's/DS_NOMEPAD_macsaud/macsaud/' {output.matrix2}
+		sed -i "" 's/CO_MACSAUD/macsaud_code/' {output.matrix2}
+		sed -i "" 's/DS_NOME/estado/' {output.matrix2}
 		"""
 
 
@@ -325,7 +330,7 @@ rule reformat_gisaid:
 			--sortby {params.sortby} \
 			--output {output.metadata_temp}
 
-		sed -i 's/division/estado/' {output.metadata_temp}
+		sed -i "" 's/division/estado/' {output.metadata_temp}
 
 		python3 scripts/reformat_dataframe.py \
 			--input1 {output.metadata_temp} \
@@ -336,7 +341,7 @@ rule reformat_gisaid:
 			--targets "coduf#8, uf_sigla#9, regiao#10" \
 			--output {output.metadata}
 
-		sed -i 's/estado/division/' {output.metadata}
+		sed -i "" 's/estado/division/' {output.metadata}
 		"""
 
 
@@ -442,9 +447,9 @@ rule variant_matrix_run:
 			--weekasdate {params.week_format} \
 			--output {output.matrix_gen2}
 
-		sed -i 's/division/estado/' {output.matrix_var2}
-		sed -i 's/division/estado/' {output.matrix_lin2}
-		sed -i 's/division/estado/' {output.matrix_gen2}
+		sed -i "" 's/division/estado/' {output.matrix_var2}
+		sed -i "" 's/division/estado/' {output.matrix_lin2}
+		sed -i "" 's/division/estado/' {output.matrix_gen2}
 		"""
 
 
